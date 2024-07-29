@@ -181,7 +181,7 @@ public static class Program
             string content = (node.FirstNode as XText).Value;
             string formattedContent = FormatStringLiteral(content);
 
-            langFileWriter.WriteLine($"{languageName}: {formattedContent}");
+            langFileWriter.WriteLine($"{EscapeKeyName(languageName)}: {formattedContent}");
         }
 
         string langFileContents = langFileWriter.ToString();
@@ -219,7 +219,7 @@ public static class Program
 
             string formattedContent = FormatStringLiteral(content);
 
-            countryFileWriter.WriteLine($"{countryName}: {formattedContent}");
+            countryFileWriter.WriteLine($"{EscapeKeyName(countryName)}: {formattedContent}");
         }
 
         string countryFileContents = countryFileWriter.ToString();
@@ -231,6 +231,20 @@ public static class Program
         writer.WriteLine("# Sourced from the Unicode Common Locale Data Repository (CLDR).");
         writer.WriteLine("# https://cldr.unicode.org/index");
         writer.WriteLine();
+    }
+
+    internal static string EscapeKeyName(string keyName)
+    {
+        string result = string.Empty;
+
+        if (char.IsDigit(keyName[0]))
+        {
+            result += "_";
+        }
+
+        result += keyName.Replace("-", "_");
+
+        return result;
     }
 
     internal static string FormatStringLiteral(string srcValue)
