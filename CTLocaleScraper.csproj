@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Generate build number and date: -->
+	<PropertyGroup>
+		<MajorVersion>0.1</MajorVersion>
+		<Date>$([System.DateTime]::UtcNow.Date.Ticks)</Date>
+		<CreationDateObj>$([System.DateTime]::new(2024, 7, 26))</CreationDateObj>
+		<CreationDate>$([System.DateTime]::new(2024, 7, 26).Ticks)</CreationDate>
+		<BuildNumber>$([System.Convert]::ToInt32($([System.DateTime]::UtcNow.Subtract($(CreationDateObj)).TotalDays)))</BuildNumber>
+		<BuildNumberSourceFile>
+			<![CDATA[
+// Generated.
+// See the .csproj for the generation script.
+
+namespace $(RootNamespace)
+{
+	public static class BuildNumber
+	{
+	    /// <summary>
+		/// The number of ticks that have passed since the file was built.
+		/// </summary>
+		public const long COMPILE_TIME = $(Date)%3B
+		
+		/// <summary>
+		/// The build number.
+		/// </summary>
+		/// <remarks>
+		/// This, like all Network Neighborhood software, is equivalent to the
+		/// number of days that have passed since the application started
+		/// development.
+		/// </remarks>
+		public const int BUILD_NUMBER = $(BuildNumber)%3B
+	}
+}
+]]>
+		</BuildNumberSourceFile>
+	</PropertyGroup>
+
+	<Target Name="BuildNumber" BeforeTargets="BeforeBuild">
+		<WriteLinesToFile File="BuildNumber.gen.cs" Lines="$(BuildNumberSourceFile)" Overwrite="true" />
+	</Target>
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
+		<RootNamespace>Rehike.CTLocaleScraper</RootNamespace>
+		<Authors>The Rehike Maintainers</Authors>
+		<Company>The Rehike Maintainers</Company>
+		<Product>CoffeeTranslation CLDR locale information scraper</Product>
+		<Description>CoffeeTranslation CLDR locale information scraper</Description>
+		<Copyright>The Rehike Maintainers</Copyright>
+		<PackageProjectUrl>https://github.com/Rehike/CTLocaleScraper</PackageProjectUrl>
+		<AssemblyVersion>$(MajorVersion).$(BuildNumber)</AssemblyVersion>
+		<FileVersion>$(MajorVersion).$(BuildNumber)</FileVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Mono.Options" Version="6.12.0.148" />
+	</ItemGroup>
+
+</Project>
